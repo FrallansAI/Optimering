@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tournaments - Tournament Scheduler</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="mb-4">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/">Tournament Scheduler</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/tournaments">Tournaments</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <h1 class="my-4">All Tournaments</h1>
+        </header>
+
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <a href="/" class="btn btn-primary mb-3">Create New Tournament</a>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search tournaments..." id="searchInput">
+                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">Search</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% if tournaments %}
+                {% for tournament in tournaments %}
+                <div class="col-md-4 mb-4 tournament-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ tournament.name }}</h5>
+                            <p class="card-text">Created: {{ tournament.created_at }}</p>
+                            <div class="d-flex">
+                                <span class="badge bg-primary me-2">{{ tournament.teams|length }} Teams</span>
+                                <span class="badge bg-success me-2">{{ tournament.matches|length }} Matches</span>
+                                <span class="badge bg-info">{{ tournament.judges|length }} Judges</span>
+                            </div>
+                            <a href="/tournaments/{{ tournament.id }}" class="btn btn-outline-primary mt-3">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No tournaments found. <a href="/">Create one</a> to get started.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const tournamentCards = document.querySelectorAll('.tournament-card');
+            
+            tournamentCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                
+                if (title.includes(searchText)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Reset search when input is cleared
+        document.getElementById('searchInput').addEventListener('input', function() {
+            if (this.value === '') {
+                const tournamentCards = document.querySelectorAll('.tournament-card');
+                tournamentCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
